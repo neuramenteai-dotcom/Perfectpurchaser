@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formazione Purchaser</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:#0B141A;overflow:hidden;}
+.wrap{display:flex;flex-direction:column;height:100vh;}
+
+.topbar{background:#1A1F2E;padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#C53030,#9B2C2C);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.72rem;color:#fff;flex-shrink:0;}
+.tinfo{flex:1;}
+.tname{font-size:.93rem;font-weight:600;color:#E9EDEF;display:flex;align-items:center;gap:7px;}
+.tdot{width:7px;height:7px;border-radius:50%;background:#25D366;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tstatus{font-size:.7rem;color:#8696A0;margin-top:1px;}
+.tbadge{font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:rgba(229,62,62,.12);color:#FC8181;border:1px solid rgba(229,62,62,.2);padding:3px 9px;border-radius:4px;}
+
+
+
+.valcard{background:#1A1F2E;border-bottom:1px solid rgba(255,255,255,.06);padding:9px 16px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.car-info{flex:1;}
+.car-model{font-size:.86rem;font-weight:600;color:#E9EDEF;}
+.car-detail{font-size:.7rem;color:#8696A0;margin-top:1px;}
+.val-price{text-align:right;}
+.val-label{font-size:.58rem;color:#8696A0;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+.val-amount{font-size:1.15rem;font-weight:700;color:#68D391;font-variant-numeric:tabular-nums;}
+.val-sub{font-size:.65rem;color:#FC8181;margin-top:2px;font-weight:600;}
+
+.scenario-bar{background:#111B21;border-bottom:1px solid rgba(255,255,255,.05);padding:7px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0;overflow-x:auto;}
+.scenario-bar::-webkit-scrollbar{height:3px;}
+.scenario-bar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);}
+.sc-label{font-size:.62rem;font-weight:700;color:#8696A0;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;flex-shrink:0;}
+.sc-btn{background:#202C33;border:1px solid rgba(255,255,255,.08);color:#AEBAC1;padding:4px 11px;border-radius:20px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;white-space:nowrap;flex-shrink:0;}
+.sc-btn:hover,.sc-btn.on{background:#C53030;color:#fff;border-color:#C53030;}
+
+.bg{flex:1;position:relative;overflow:hidden;}
+.bg::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none;}
+.msgs{position:absolute;inset:0;overflow-y:auto;padding:12px 16px 8px;display:flex;flex-direction:column;gap:3px;scroll-behavior:smooth;}
+.msgs::-webkit-scrollbar{width:4px;}
+.msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px;}
+
+.dsep{align-self:center;background:rgba(17,27,33,.85);color:#E9EDEF;font-size:.65rem;font-weight:500;padding:4px 12px;border-radius:7px;margin:5px 0 4px;border:1px solid rgba(255,255,255,.05);}
+.mw{display:flex;flex-direction:column;margin:1px 0;animation:bIn .2s ease;}
+@keyframes bIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.mw.in{align-items:flex-start;}
+.mw.out{align-items:flex-end;}
+.bbl{max-width:72%;padding:8px 11px 6px;border-radius:9px;word-break:break-word;}
+.mw.in .bbl{background:#202C33;border-top-left-radius:2px;}
+.mw.out .bbl{background:#005C4B;border-top-right-radius:2px;}
+.btxt{font-size:.87rem;line-height:1.52;color:#E9EDEF;white-space:pre-wrap;}
+.bmeta{display:flex;align-items:center;gap:4px;justify-content:flex-end;margin-top:2px;}
+.btime{font-size:.62rem;color:#8696A0;}
+.tks svg{width:14px;height:9px;color:#53BDEB;}
+
+.tw{display:flex;align-items:center;padding:2px 0;animation:bIn .2s ease;}
+.tdots{background:#202C33;border-radius:9px;border-top-left-radius:2px;padding:10px 13px;display:flex;gap:4px;align-items:center;}
+.tdots span{width:6px;height:6px;border-radius:50%;background:#8696A0;display:block;animation:td .9s infinite;}
+.tdots span:nth-child(2){animation-delay:.18s;}
+.tdots span:nth-child(3){animation-delay:.36s;}
+@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-4px);opacity:1}}
+
+.qrs{display:flex;gap:5px;flex-wrap:wrap;padding:5px 16px 3px;flex-shrink:0;}
+.qr{background:#202C33;border:1px solid rgba(255,255,255,.09);color:#FC8181;padding:5px 12px;border-radius:20px;font-size:.73rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;white-space:nowrap;}
+.qr:hover{background:#2A3942;border-color:rgba(197,48,48,.35);}
+
+.inpbar{background:#202C33;padding:7px 13px;display:flex;align-items:flex-end;gap:8px;flex-shrink:0;}
+.ib2{width:32px;height:32px;border-radius:50%;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#8696A0;flex-shrink:0;}
+.ib2 svg{width:20px;height:20px;}
+.inpw{flex:1;background:#2A3942;border-radius:10px;padding:7px 12px;}
+#mi{width:100%;border:none;background:transparent;font-family:inherit;font-size:.87rem;color:#E9EDEF;outline:none;resize:none;max-height:100px;line-height:1.45;display:block;}
+#mi::placeholder{color:#8696A0;}
+.sndb{width:40px;height:40px;border-radius:50%;background:#9B2C2C;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;transition:all .18s;}
+.sndb:hover{background:#C53030;}
+.sndb:disabled{background:#2A3942;cursor:default;}
+.sndb svg{width:19px;height:19px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="topbar">
+    <div class="av">FP</div>
+    <div class="tinfo">
+      <div class="tname">Formazione Purchaser <div class="tdot"></div></div>
+      <div class="tstatus">Simulatore casistiche reali · Prezzo fisso</div>
+    </div>
+    <div class="tbadge">Uso interno</div>
+  </div>
+
+  <div class="valcard">
+    <div style="font-size:1.4rem">🚗</div>
+    <div class="car-info">
+      <div class="car-model" id="carModel">Volkswagen Golf 1.6 TDI</div>
+      <div class="car-detail" id="carDetail">2018 · 87.000 km · Grigio · Diesel</div>
+    </div>
+    <div class="val-price">
+      <div class="val-label">Offerta finale</div>
+      <div class="val-amount" id="valAmount">€ 11.500</div>
+      <div class="val-sub">Prezzo fisso · Non modificabile</div>
+    </div>
+  </div>
+
+  <div class="scenario-bar">
+    <span class="sc-label">Scenario:</span>
+    <button class="sc-btn on" onclick="setScenario(this,'base')">Prezzo basso</button>
+    <button class="sc-btn" onclick="setScenario(this,'km')">Km errati self-eva</button>
+    <button class="sc-btn" onclick="setScenario(this,'privato')">Privato offre di più</button>
+    <button class="sc-btn" onclick="setScenario(this,'concessionario')">Concessionario offre di più</button>
+    <button class="sc-btn" onclick="setScenario(this,'intestatario')">Intestatario assente</button>
+    <button class="sc-btn" onclick="setScenario(this,'aspetta_auto')">Aspetta auto nuova</button>
+    <button class="sc-btn" onclick="setScenario(this,'rejected')">Auto deprezzata</button>
+    <button class="sc-btn" onclick="setScenario(this,'iva')">IVA aziendale</button>
+    <button class="sc-btn" onclick="setScenario(this,'penale')">Paura penale C+</button>
+    <button class="sc-btn" onclick="setScenario(this,'valutazione')">Solo valutazione</button>
+  </div>
+
+  <div class="bg">
+    <div class="msgs" id="msgs"></div>
+  </div>
+  <div class="qrs" id="qrs"></div>
+  <div class="inpbar">
+    <button class="ib2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
+    <div class="inpw"><textarea id="mi" rows="1" placeholder="Rispondi come il cliente..." onkeydown="hk(event)" oninput="ar(this)"></textarea></div>
+    <button class="sndb" id="sndb" onclick="send()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<script>
+let hist=[], busy=false, currentScenario='base';
+
+const CAR = { model:"Volkswagen Golf 1.6 TDI", year:2018, km:87000, color:"Grigio", fuel:"Diesel", offer:11500, selfeva:12800 };
+
+const SCENARIOS = {
+  base: {
+    label:"Prezzo basso",
+    ctx:"Il cliente ritiene l'offerta troppo bassa. Si aspettava almeno €13.000. L'auto è in condizioni nella media.",
+    init:"Guardi, mi aspettavo almeno €13.000. €11.500 mi sembra davvero poco. Non si può fare di meglio?",
+    qr:["La macchina è perfetta, merita di più","Su Subito la vendo a di più","Almeno €12.500 e firmo","Ci devo pensare"]
+  },
+  km: {
+    label:"Km errati",
+    ctx:"Il cliente aveva inserito 47.000 km nella self-eva invece dei reali 147.000 km. Il prezzo è sceso da €15.200 a €9.800. È sorpreso e arrabbiato.",
+    init:"Ma come! Online mi davano €15.200 e adesso mi dite €9.800?! Ho messo i km giusti io, non capisco.",
+    qr:["Ho scritto i km giusti","L'auto è in ottimo stato però","Non accetto questa riduzione","Perché non me l'avete detto prima?"]
+  },
+  privato: {
+    label:"Privato offre di più",
+    ctx:"Il cliente ha un privato su Subito.it che offre €13.000. Vuole capire perché scegliere noi.",
+    init:"Ho già un privato che mi dà €13.000. Voi €11.500. Sono €1.500 in meno — perché dovrei scegliere voi?",
+    qr:["€1.500 in più non è poco","Il privato mi sembra serio","Convincimi del contrario","Fate almeno €12.000"]
+  },
+  concessionario: {
+    label:"Concessionario offre di più",
+    ctx:"La concessionaria offre €12.500 in permuta per l'acquisto di una nuova auto.",
+    init:"In concessionaria mi danno €12.500 in permuta. Voi €11.500. E lì compro anche la macchina nuova, più pratico no?",
+    qr:["In permuta è tutto più semplice","Mi danno €1.000 in più","Ho già scelto la macchina nuova lì","Convince mi del contrario"]
+  },
+  intestatario: {
+    label:"Intestatario assente",
+    ctx:"L'auto è intestata alla madre anziana non presente. Il figlio è venuto da solo e non può firmare nulla.",
+    init:"L'auto è di mia madre, lei non è potuta venire oggi. Posso fare la perizia e poi portarle l'offerta?",
+    qr:["Mia madre fa fatica a spostarsi","Non sapevo servisse anche lei","Si può fare con una delega?","Torno domani con lei"]
+  },
+  aspetta_auto: {
+    label:"Aspetta auto nuova",
+    ctx:"Il cliente accetta il prezzo ma non può consegnare entro 14 giorni. La nuova auto arriva tra 6 settimane.",
+    init:"Il prezzo va bene, ma la mia nuova auto arriva tra 6 settimane. Non posso restare a piedi. Come facciamo?",
+    qr:["Non posso stare senza auto","Non so la data esatta di consegna","E se firmo e poi non riesco?","C'è un modo per allungare i tempi?"]
+  },
+  rejected: {
+    label:"Auto deprezzata",
+    ctx:"L'auto è stata deprezzata per danni non dichiarati (graffi e ammaccatura). Prezzo sceso da €14.200 a €11.500. Il cliente è convinto che l'auto sia perfetta.",
+    init:"Ma la mia auto è perfetta! Quei graffi sono microscopici. Perché mi avete abbassato di €2.700?",
+    qr:["Quei graffi non contano nulla","Non li avevo dichiarati perché minimi","Non è giusto abbassare così","Dove li avete trovati?"]
+  },
+  iva: {
+    label:"IVA aziendale",
+    ctx:"Auto aziendale con IVA esposta al 40%. Il cliente non capisce il meccanismo e pensa di perdere soldi.",
+    init:"Mi hanno parlato di IVA esposta al 40%... non ho capito. Mi sembra di perderci rispetto a un privato. Me lo spiega?",
+    qr:["Non capisco il calcolo","Il mio commercialista dice altro","Quanto perdo esattamente?","Posso vendere come privato?"]
+  },
+  penale: {
+    label:"Paura penale C+",
+    ctx:"Il cliente accetta il prezzo ma ha paura della penale nel contratto C+ se non consegna in tempo.",
+    init:"Il prezzo va bene, ma non me la sento di firmare con una penale. E se non riesco a portarvi la macchina in tempo?",
+    qr:["Quanto è la penale?","Non voglio rischiare","E se la nuova non arriva in tempo?","C'è un modo per tutelarmi?"]
+  },
+  valutazione: {
+    label:"Solo valutazione",
+    ctx:"Il cliente è venuto solo per sapere quanto vale l'auto. Non è pronto a vendere e non sa ancora che auto comprare.",
+    init:"Guardi, sono venuto solo per capire quanto vale la mia auto. Non ho ancora deciso se venderla — devo trovare la nuova prima.",
+    qr:["Non so ancora che auto comprare","Non sono pronto adesso","Quanto vale esattamente?","Posso tornare quando sono pronto?"]
+  }
+};
+
+const SYS_BASE = `Sei Luca, purchaser senior in un'azienda che acquista auto usate dai privati. Sei in filiale con un cliente che ha fatto la valutazione online e ora è qui per la perizia e la vendita.
+
+AUTO: ${CAR.model} · ${CAR.year} · ${CAR.km.toLocaleString('it-IT')} km · ${CAR.color} · ${CAR.fuel}
+OFFERTA: €${CAR.offer.toLocaleString('it-IT')} — PREZZO FISSO, NON MODIFICABILE IN NESSUN CASO.
+
+REGOLA ASSOLUTA:
+Il prezzo di €${CAR.offer.toLocaleString('it-IT')} NON SI MUOVE. Mai. Nemmeno di un euro.
+Non dire mai "vediamo cosa posso fare", "provo a chiedere", "magari riusciamo ad avvicinarci".
+Il prezzo è generato da un algoritmo di valutazione di mercato — non è una tua decisione personale.
+Quando il cliente chiede di alzare: "Capisco, ma il prezzo è determinato dal nostro sistema algoritmico di mercato — non è nelle mie possibilità modificarlo."
+
+SCENARIO ATTUALE:
+{SCENARIO}
+
+OBIETTIVO: Convincere il cliente ad accettare l'offerta così com'è, oppure uscire con un HO (appuntamento futuro) con prezzo bloccato 7 giorni.
+
+TECNICHE PER SCENARIO:
+
+PREZZO BASSO:
+→ "Il prezzo riflette il mercato reale di questa vettura oggi. Non è il prezzo a cui si compra — è quello a cui si vende in tempi certi."
+→ "Su Subito può chiedere di più, ma: quanti mesi aspetta? Quante visite? Trattative al ribasso? Rischio pagamento? Noi paghiamo domani mattina, bonifico garantito."
+→ "Le auto di questa tipologia perdono €150-200 al mese di valore. Tra 3 mesi il mercato potrebbe essere peggio."
+
+KM ERRATI:
+→ "I km sono il dato più oggettivo in assoluto — ogni 10.000 km in più corrispondono a €500-700 di valore in meno."
+→ "Non è una penalizzazione, è il valore reale della sua auto sul mercato."
+→ Se insiste che erano giusti: "Possiamo ricontrollare insieme i documenti — ma il prezzo segue sempre i km reali verificati."
+
+PRIVATO CHE OFFRE DI PIÙ:
+→ "Il privato può sparire, trattare al ribasso all'ultimo, pagare in modi complicati. Noi garantiamo bonifico entro 24 ore."
+→ "Gestiamo noi tutto il passaggio di proprietà. Zero rischi burocratici o legali."
+→ "Su €1.500 di differenza: quanto vale la sua tranquillità e il suo tempo?"
+
+CONCESSIONARIO CON PERMUTA:
+→ "In permuta le danno €12.500 perché recuperano sulla nuova auto. Le consiglio: chieda di togliere la permuta e applicare lo sconto equivalente sul listino della nuova — vedrà che la cifra cambia."
+→ "Noi le offriamo €11.500 cash, puliti, senza vincoli di acquisto di nulla."
+
+INTESTATARIO ASSENTE:
+→ "Per procedere ho bisogno dell'intestatario fisicamente presente, o di una procura. È una tutela legale per lei."
+→ "Possiamo fissare per domani? Ci vogliono 20 minuti. Le blocco il prezzo di oggi per 7 giorni."
+
+ASPETTA AUTO NUOVA:
+→ "Abbiamo il contratto C+ con consegna posticipata fino a 30 giorni. Firma oggi, consegna quando arriva la nuova — il prezzo rimane bloccato."
+→ "Se la nuova arriva dopo i 30 giorni, ci avvisi prima e valutiamo insieme."
+
+AUTO DEPREZZATA:
+→ "I danni hanno un costo di ripristino concreto — lo sconto riflette esattamente quel costo."
+→ "Le posso mostrare voce per voce cosa incide."
+→ "Se vuole far riparare i danni prima, possiamo rivalutare dopo."
+
+IVA AZIENDALE:
+→ "Ha detratto l'IVA quando ha acquistato — quando vende, quella quota rientra nel calcolo. È normativa standard per tutti i veicoli aziendali."
+→ "Le faccio un esempio numerico in 2 minuti se vuole."
+
+PAURA PENALE C+:
+→ "La penale scatta solo se non consegna E non ci avvisa. Chi ci avvisa prima della scadenza non ha mai pagato nulla."
+→ "Senza firma oggi il prezzo non è bloccato — potrebbe cambiare domani. Con la firma ha la certezza."
+
+SOLO VALUTAZIONE:
+→ Non spingere alla firma — costruire fiducia.
+→ "Tenga questo come riferimento reale — vale 7 giorni. Quando trova la nuova, mi chiami."
+→ Obiettivo: uscita positiva con possibile HO.
+
+STILE:
+- Sei in filiale, faccia a faccia: tono caldo, diretto, umano — non da call center
+- Max 3 frasi per messaggio
+- Mai promettere rialzi di prezzo
+- Proponi sempre HO se non chiudi oggi
+- Chiudi sempre con una domanda o proposta concreta
+- Non rivelare di essere un'AI`;
+
+function getSYS(){
+  return SYS_BASE.replace('{SCENARIO}', SCENARIOS[currentScenario].ctx);
+}
+
+function now(){const d=new Date();return d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");}
+function esc(t){return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");}
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+function app(el){const c=document.getElementById("msgs");c.appendChild(el);c.scrollTop=c.scrollHeight;}
+
+function addIn(text){
+  const w=document.createElement("div");w.className="mw in";
+  w.innerHTML=`<div class="bbl"><div class="btxt">${esc(text)}</div><div class="bmeta"><span class="btime">${now()}</span></div></div>`;
+  app(w);
+}
+function addOut(text){
+  const w=document.createElement("div");w.className="mw out";
+  w.innerHTML=`<div class="bbl"><div class="btxt">${esc(text)}</div><div class="bmeta"><span class="btime">${now()}</span><span class="tks"><svg viewBox="0 0 18 11" fill="none"><path d="M1 5.5L6 10L17 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M6 10L17 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".5" transform="translate(-3,0)"/></svg></span></div></div>`;
+  app(w);
+}
+function addSep(t){const e=document.createElement("div");e.className="dsep";e.textContent=t;document.getElementById("msgs").appendChild(e);}
+function showT(){const c=document.getElementById("msgs");const w=document.createElement("div");w.className="tw";w.id="te";w.innerHTML=`<div class="tdots"><span></span><span></span><span></span></div>`;c.appendChild(w);c.scrollTop=c.scrollHeight;}
+function hideT(){const e=document.getElementById("te");if(e)e.remove();}
+function setQR(opts){document.getElementById("qrs").innerHTML=opts.map(o=>`<button class="qr" onclick="pickQR('${o.replace(/'/g,"\\'")}')">${o}</button>`).join('');}
+function clearQR(){document.getElementById("qrs").innerHTML="";}
+function pickQR(t){document.getElementById("mi").value=t;clearQR();send();}
+
+function smartQR(reply){
+  const r=reply.toLowerCase();
+  const sc=SCENARIOS[currentScenario];
+  if(r.includes("7 giorni")||r.includes("blocco")||r.includes("ho")||r.includes("appuntamento")) return["Ok, ci penso","Quando scade il prezzo?","Come prenoto?"];
+  if(r.includes("subito")||r.includes("privato")||r.includes("mesi")) return["Il privato mi sembra affidabile","Ma €1.500 fanno differenza","Ok, mi convince"];
+  if(r.includes("permut")||r.includes("cash")||r.includes("concess")) return["In permuta ho meno pensieri","Non ci avevo pensato","A questo punto ci ragiono"];
+  if(r.includes("c+")||r.includes("consegna")||r.includes("30 giorni")) return["Ok firmo con consegna posticipata","E se non arriva in 30 giorni?","Posso farlo adesso?"];
+  if(r.includes("iva")||r.includes("commercialista")||r.includes("esempio")) return["Fammi l'esempio numerico","Chiamo il commercialista","Non ho capito ancora"];
+  if(r.includes("procura")||r.includes("domani")||r.includes("madre")) return["Ok vengo domani con lei","Come funziona la procura?","Posso chiamarla adesso?"];
+  return sc.qr.slice(0,3);
+}
+
+async function callAPI(){
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "anthropic-version":"2023-06-01",
+      "anthropic-dangerous-request-origin": "user-provided"
+    },
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:450,
+      system:getSYS(),
+      messages:hist.map(m=>({role:m.role,content:m.content}))
+    })
+  });
+  if(!r.ok){
+    const err = await r.json().catch(()=>({}));
+    throw new Error(err.error?.message || r.status);
+  }
+  return r.json();
+}
+
+async function send(){
+  if(busy)return;
+  const inp=document.getElementById("mi");
+  const txt=inp.value.trim();
+  if(!txt)return;
+  inp.value="";ar(inp);
+  clearQR();
+  addOut(txt);
+  hist.push({role:"user",content:txt});
+  busy=true;
+  document.getElementById("sndb").disabled=true;
+  await wait(300);
+  showT();
+  try{
+    const resp=await callAPI();
+    await wait(500+Math.random()*350);
+    hideT();
+    const full=resp.content[0].text;
+    hist.push({role:"assistant",content:full});
+    const parts=full.split("|||").map(p=>p.trim()).filter(p=>p);
+    parts.forEach((p,i)=>setTimeout(()=>addIn(p),i*340));
+    setTimeout(()=>setQR(smartQR(full)),parts.length*340+150);
+  }catch(e){
+    hideT();
+    addIn("Errore di connessione — controlla la API key e riprova.");
+    console.error(e);
+  }
+  busy=false;
+  document.getElementById("sndb").disabled=false;
+  document.getElementById("mi").focus();
+}
+
+async function startScenario(){
+  hist=[];
+  document.getElementById("msgs").innerHTML="";
+  document.getElementById("qrs").innerHTML="";
+  const sc=SCENARIOS[currentScenario];
+  addSep(`Scenario: ${sc.label} · Filiale`);
+  await wait(500);
+  showT();
+  hist=[{role:"user",content:sc.init}];
+  try{
+    const resp=await callAPI();
+    hideT();
+    addOut(sc.init);
+    hist=[{role:"user",content:sc.init}];
+    const full=resp.content[0].text;
+    hist.push({role:"assistant",content:full});
+    const parts=full.split("|||").map(p=>p.trim()).filter(p=>p);
+    await wait(350);
+    parts.forEach((p,i)=>setTimeout(()=>addIn(p),i*340));
+    setTimeout(()=>setQR(sc.qr.slice(0,3)),parts.length*340+150);
+  }catch(e){
+    hideT();
+    addOut(sc.init);
+    addIn("Buongiorno! Prego si accomodi.");
+    setQR(sc.qr.slice(0,3));
+    console.error(e);
+  }
+}
+
+function setScenario(btn,key){
+  document.querySelectorAll(".sc-btn").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  currentScenario=key;
+  startScenario();
+}
+
+function hk(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send();}}
+function ar(el){el.style.height="auto";el.style.height=Math.min(el.scrollHeight,100)+"px";}
+
+startScenario();
+</script>
+</body>
+</html>
