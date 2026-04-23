@@ -306,37 +306,22 @@ function smartQR(reply){
   return sc.qr.slice(0,3);
 }
 
-let apiKey = localStorage.getItem("anthropic_api_key");
-if(!apiKey) {
-  apiKey = prompt("Inserisci la tua API Key di Anthropic per usare il simulatore:");
-  if(apiKey) localStorage.setItem("anthropic_api_key", apiKey);
-}
-
 async function callAPI(){
-  if(!apiKey) {
-    throw new Error("API Key mancante. Ricarica la pagina per inserirla.");
-  }
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
+  const r = await fetch("https://text.pollinations.ai/openai", {
     method:"POST",
     headers:{
-      "Content-Type":"application/json",
-      "x-api-key": apiKey,
-      "anthropic-version":"2023-06-01",
-      "anthropic-dangerous-request-origin": "user-provided"
+      "Content-Type":"application/json"
     },
     body:JSON.stringify({
-      model:"claude-3-5-sonnet-20241022",
-      max_tokens:450,
-      system:getSYS(),
-      messages:hist.map(m=>({role:m.role,content:m.content}))
+      model:"openai",
+      messages:[
+        {role: "system", content: getSYS()},
+        ...hist.map(m=>({role:m.role,content:m.content}))
+      ]
     })
   });
   if(!r.ok){
     const err = await r.json().catch(()=>({}));
-    if(r.status === 401) {
-       localStorage.removeItem("anthropic_api_key");
-       throw new Error("API Key non valida. Ricarica la pagina per reinserirla.");
-    }
     throw new Error(err.error?.message || r.status);
   }
   return r.json();
@@ -359,7 +344,7 @@ async function send(){
     const resp=await callAPI();
     await wait(500+Math.random()*350);
     hideT();
-    const full=resp.content[0].text;
+    const full=resp.choices[0].message.content;
     hist.push({role:"assistant",content:full});
     const parts=full.split("|||").map(p=>p.trim()).filter(p=>p);
     parts.forEach((p,i)=>setTimeout(()=>addIn(p),i*340));
@@ -388,7 +373,7 @@ async function startScenario(){
     hideT();
     addOut(sc.init);
     hist=[{role:"user",content:sc.init}];
-    const full=resp.content[0].text;
+    const full=resp.choices[0].message.content;
     hist.push({role:"assistant",content:full});
     const parts=full.split("|||").map(p=>p.trim()).filter(p=>p);
     await wait(350);
