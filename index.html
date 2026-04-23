@@ -306,16 +306,26 @@ function smartQR(reply){
   return sc.qr.slice(0,3);
 }
 
+let apiKey = localStorage.getItem("anthropic_api_key");
+if(!apiKey) {
+  apiKey = prompt("Inserisci la tua API Key di Anthropic per usare il simulatore:");
+  if(apiKey) localStorage.setItem("anthropic_api_key", apiKey);
+}
+
 async function callAPI(){
+  if(!apiKey) {
+    throw new Error("API Key mancante. Ricarica la pagina per inserirla.");
+  }
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method:"POST",
     headers:{
       "Content-Type":"application/json",
+      "x-api-key": apiKey,
       "anthropic-version":"2023-06-01",
       "anthropic-dangerous-request-origin": "user-provided"
     },
     body:JSON.stringify({
-      model:"claude-sonnet-4-20250514",
+      model:"claude-3-5-sonnet-20241022",
       max_tokens:450,
       system:getSYS(),
       messages:hist.map(m=>({role:m.role,content:m.content}))
@@ -323,6 +333,10 @@ async function callAPI(){
   });
   if(!r.ok){
     const err = await r.json().catch(()=>({}));
+    if(r.status === 401) {
+       localStorage.removeItem("anthropic_api_key");
+       throw new Error("API Key non valida. Ricarica la pagina per reinserirla.");
+    }
     throw new Error(err.error?.message || r.status);
   }
   return r.json();
